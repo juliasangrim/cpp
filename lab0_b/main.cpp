@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 			std::ofstream fout(argv[2]);
 			std::cout << argv[2];
 			if (!fout.is_open()) {
-				std::cout << "File cannot open";
+				std::cout << " File cannot open";
 			}
 			else {
 				writeFile(fout, sortWords, wordsCount);
