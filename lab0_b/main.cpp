@@ -70,8 +70,8 @@ int main(int argc, char *argv[]) {
 			std::vector < std::pair<std::string, int >> sortWords;
 			sortWordsFreq(wordMap, sortWords);
 			std::ofstream fout(argv[2]);
-			std::cout << argv[2];
 			if (!fout.is_open()) {
+				std::cout << argv[2];
 				std::cout << " File cannot open";
 			}
 			else {
