@@ -1,1 +1,0 @@
--isystem D:/programming/prog2_1/lab1_tests/lib/googletest-master/googlemock/include -isystem D:/programming/prog2_1/lab1_tests/lib/googletest-master/googlemock -isystem D:/programming/prog2_1/lab1_tests/lib/googletest-master/googletest/include -isystem D:/programming/prog2_1/lab1_tests/lib/googletest-master/googletest 
