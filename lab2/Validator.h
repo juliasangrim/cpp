@@ -6,7 +6,12 @@
 #define WORKFLOW_VALIDATOR_H
 #include <iostream>
 
-class Validator {
+class IValidator {
+public:
+    virtual ~IValidator() = default;
+};
+
+class Validator : public IValidator {
 public:
     Validator(const std::string &message);
 
