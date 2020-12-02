@@ -73,7 +73,7 @@ void IWorker::SortBlock::executor (std::vector<std::string> &text) {
 
 void IWorker::ReplaceBlock::executor (std::vector<std::string> &text){
     for(auto & i : text) {
-        int pos = 0;
+        unsigned int pos = 0;
         pos = i.find(m_world1, pos);
         while (pos != std::string::npos) {
             i.replace(pos, m_world1.size(), m_world2);

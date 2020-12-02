@@ -2,8 +2,8 @@
 
 int ParserFile::parseFile(char *fileName) {
     int indexFunc;
-    int idxRead;
-    int idxWrite;
+    int idxRead = 0;
+    int idxWrite = 0;
     std::map<int, std::shared_ptr<IWorker::IWorker>> block;
     std::vector<int> queue;
     std::ifstream fin(fileName);
