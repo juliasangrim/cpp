@@ -13,8 +13,7 @@ public:
 
 class Validator : public IValidator {
 public:
-    Validator(const std::string &message);
-
+    explicit Validator(const std::string &message);
 };
 
 

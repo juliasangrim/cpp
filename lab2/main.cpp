@@ -1,6 +1,6 @@
 #include "workflow.h"
 #include "ParserFile.h"
-
+#include <exception>
 using namespace std;
 int main(int argc, char** argv) {
     try {

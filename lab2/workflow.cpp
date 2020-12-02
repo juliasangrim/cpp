@@ -48,8 +48,8 @@ void IWorker::WriteFileBlock::executor (std::vector<std::string> &text) {
     if (!fout.is_open()) {
         Validator("File can't open in function writefile. Please, check your workflow");
     }
-    for(int i = 0; i < text.size(); i++) {
-        fout << text[i] <<std::endl;
+    for(auto & i : text) {
+        fout << i <<std::endl;
     }
     fout.close();
 }
@@ -58,9 +58,9 @@ void IWorker::WriteFileBlock::executor (std::vector<std::string> &text) {
 void IWorker::GrepBlock::executor (std::vector<std::string> &text){
     std::vector<std::string> newText;
     int j = 0;
-    for(int i = 0; i < text.size(); i++) {
-        if (std::string::npos != text[i].find(m_word)) {
-            newText.push_back(text[i]);
+    for(auto & i : text) {
+        if (std::string::npos != i.find(m_word)) {
+            newText.push_back(i);
             j++;
         }
     }
@@ -72,12 +72,12 @@ void IWorker::SortBlock::executor (std::vector<std::string> &text) {
 }
 
 void IWorker::ReplaceBlock::executor (std::vector<std::string> &text){
-    for(int i = 0; i < text.size(); i++) {
+    for(auto & i : text) {
         int pos = 0;
-        pos = text[i].find(m_world1, pos);
+        pos = i.find(m_world1, pos);
         while (pos != std::string::npos) {
-            text[i].replace(pos, m_world1.size(), m_world2);
-            pos = text[i].find(m_world1, pos);
+            i.replace(pos, m_world1.size(), m_world2);
+            pos = i.find(m_world1, pos);
         }
     }
 }
@@ -88,14 +88,14 @@ void IWorker::DumpBlock::executor (std::vector<std::string> &text) {
     if (!fout.is_open()) {
         Validator("File can't open in function dump. Please, check your workflow");
     }
-    for(int i = 0; i < text.size(); i++) {
-        fout << text[i] << std::endl;
+    for(auto & i : text) {
+        fout << i << std::endl;
     }
     fout.close();
 }
 
 void IWorker::Block::executor (std::vector<std::string> &text) {
-    for (int i = 0; i < m_queue.size(); i++){
-        m_block[m_queue[i]]->executor(text);
+    for (int & i : m_queue){
+        m_block[i]->executor(text);
     }
 }

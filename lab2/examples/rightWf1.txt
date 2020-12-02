@@ -1,0 +1,9 @@
+desc
+1 = replace abra cad
+2 = grep h
+3 = sort
+0 = readfile in.txt
+5 = writefile out.txt
+6 = replace a WWW
+csed
+0 -> 1 -> 2 -> 3 -> 6 -> 5

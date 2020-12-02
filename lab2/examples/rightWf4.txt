@@ -1,0 +1,7 @@
+desc
+1 = replace a z
+2 = sort
+0 = readfile in.txt
+3 = writefile out.txt
+csed
+0 -> 1 -> 2 -> 3

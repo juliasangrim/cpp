@@ -23,7 +23,7 @@ namespace IWorker {
     private:
         std::string m_fileName;
     public:
-        ReadFileBlock(std::string &str);
+        explicit ReadFileBlock(std::string &str);
         void executor(std::vector<std::string> &text) override;
     };
 
@@ -31,7 +31,7 @@ namespace IWorker {
     private:
         std::string m_fileName;
     public:
-        WriteFileBlock(std::string &str);
+        explicit WriteFileBlock(std::string &str);
         void executor(std::vector<std::string> &text) override;
     };
 
@@ -39,7 +39,7 @@ namespace IWorker {
     private:
         std::string m_word;
     public:
-        GrepBlock(std::string &str);
+        explicit GrepBlock(std::string &str);
         void executor(std::vector<std::string> &text) override;
     };
 
@@ -61,7 +61,7 @@ namespace IWorker {
     private:
         std::string m_fileName;
     public:
-        DumpBlock(std::string &str);
+        explicit DumpBlock(std::string &str);
         void executor(std::vector<std::string> &text) override;
     };
 
