@@ -1,9 +1,7 @@
-
 #include "parser.h"
-#include <cstdlib>
-#include <windows.h>
 
 int main(int argc, char **argv) {
+    srand(0);
     Parser::parserCmd(argc, argv);
     return 0;
 }

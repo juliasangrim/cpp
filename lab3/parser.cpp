@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "Game.h"
 
 struct Arg: public option::Arg
 {
@@ -31,7 +32,11 @@ const option::Descriptor usage[] = {
         {static_cast<int>(Parser::OptionIndex::HELP), 0, "h" ,"help", option::Arg::None,"-h --help - \n     print information about parameters"},
         {static_cast<int> (Parser::OptionIndex::COUNT), 0, "c", "count", Arg::Numeric, "-c --count - \n     Default: 1, amount of rounds"},
         {static_cast<int> (Parser::OptionIndex::FIRST), 0, "f", "first", Arg::NonEmpty, "-f --first - \n     Default: random, type of the first player"},
-        {static_cast<int> (Parser::OptionIndex::SECOND), 0, "s", "second", Arg::NonEmpty, "-s --second - \n     Default: random, type of the second player"},
+        {static_cast<int> (Parser::OptionIndex::SECOND), 0, "s", "second", Arg::NonEmpty, "-s --second - \n     Default: random, type of the second player\n"
+                                                                                          "Type of players: random, optimal and console\n"
+                                                                                          "random - random play\n"
+                                                                                          "console - player is you\n"
+                                                                                          "optimal - player is computer\n"},
         {0,0,0,0,0,0}
 };
 
@@ -64,42 +69,41 @@ int Parser::parserCmd(int argc, char **argv) {
     if (options[static_cast<int> (Parser::OptionIndex::COUNT)]) {
         countRounds = std::stoi(options[static_cast<int> (Parser::OptionIndex::COUNT)].arg);
     }
-    std::cout<<countRounds<<std::endl;
     /////////////////////////////////////////////////////////////////////////////////////////
     //TODO FIRST
-
+    std::shared_ptr<IGamer::IGamer> player1;
     if (options[static_cast<int> (Parser::OptionIndex::FIRST)]) {
         std::string first(options[static_cast<int> (Parser::OptionIndex::FIRST)].arg);
         if (first == "random") {
-            std::cout << "First:random" << std::endl;
+            player1 = std::make_shared<IGamer::RandomGamer>();
         } else if (first == "optimal") {
-            std::cout << "optimal" << std::endl;
+            player1 = std::make_shared<IGamer::OptimalGamer>();
         } else if (first == "console") {
-            std::cout << "console" << std::endl;
+            player1 = std::make_shared<IGamer::ConsoleGamer>();
         } else {
             std::cout << "There's no this type of players" << std::endl;
         }
     } else {
-        std::string first = "random";
-        std::cout<< first;
+        player1 = std::make_shared<IGamer::RandomGamer>();
     }
     //////////////////////////////////////////////////////////////////////////////////////////
     //TODO SECOND
+    std::shared_ptr<IGamer::IGamer> player2;
     if (options[static_cast<int> (Parser::OptionIndex::SECOND)]) {
         std::string second(options[static_cast<int> (Parser::OptionIndex::SECOND)].arg);
         if (second == "random") {
-            std::cout << "Second:random" << std::endl;
+            player2 = std::make_shared<IGamer::RandomGamer>();
         } else if (second == "optimal") {
-            std::cout << "Second:optimal" << std::endl;
+            player2 = std::make_shared<IGamer::OptimalGamer>();
         } else if (second == "console") {
-            std::cout << "Second:console" << std::endl;
+            player2 = std::make_shared<IGamer::ConsoleGamer>();
         } else {
             std::cout << "There's no this type of players" << std::endl;
         }
     } else {
-        std::string second = "random";
-        std::cout<< second;
+        player2 = std::make_shared<IGamer::RandomGamer>();
     }
+    playGame(player1, player2, countRounds);
     return 0;
 }
 
