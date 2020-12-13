@@ -2,16 +2,6 @@
 
 IGamer::ConsoleGamer::ConsoleGamer() {
     m_field = new char* [sizeField];
-    for (char ch = '0'; ch <= '3'; ch++) {
-        ships[ch] = 1;
-    }
-    for (char ch = '4'; ch <= '6'; ch++) {
-        ships[ch] = 2;
-    }
-    for (char ch = '7'; ch <= '8'; ch++) {
-        ships[ch] = 3;
-    }
-    ships['9'] = 4;
     for (int i = 0; i < sizeField; i++) {
         m_field[i] = new char [sizeField];
     }
@@ -24,16 +14,6 @@ IGamer::ConsoleGamer::ConsoleGamer() {
 
 IGamer::RandomGamer::RandomGamer() {
     m_field = new char* [sizeField];
-    for (char ch = '0'; ch <= '3'; ch++) {
-        ships[ch] = 1;
-    }
-    for (char ch = '4'; ch <= '6'; ch++) {
-        ships[ch] = 2;
-    }
-    for (char ch = '7'; ch <= '8'; ch++) {
-        ships[ch] = 3;
-    }
-    ships['9'] = 4;
     for (int i = 0; i < sizeField; i++) {
         m_field[i] = new char [sizeField];
     }
@@ -46,16 +26,6 @@ IGamer::RandomGamer::RandomGamer() {
 
 IGamer::OptimalGamer::OptimalGamer() {
     m_field = new char* [sizeField];
-    for (char ch = '0'; ch <= '3'; ch++) {
-        ships[ch] = 1;
-    }
-    for (char ch = '4'; ch <= '6'; ch++) {
-        ships[ch] = 2;
-    }
-    for (char ch = '7'; ch <= '8'; ch++) {
-        ships[ch] = 3;
-    }
-    ships['9'] = 4;
     for (int i = 0; i < sizeField; i++) {
         m_field[i] = new char [sizeField];
     }
@@ -170,8 +140,13 @@ void IGamer::ConsoleGamer::setShip(int &shipCount, int &shipSize, int &shipIndex
         if (setting_is_possible) {
             x = temp_x;
             y = temp_y;
+            char index = static_cast<char>(static_cast<int>('0') + shipIndex);
+            ships[index].size = shipSize;
+            ships[index].x_begin = x;
+            ships[index].y_begin = y;
+            ships[index].direction = dir;
             for (int i = 0; i < shipSize; ++i) {
-                m_field[x][y] = static_cast<char>(static_cast<int>('0') + shipIndex);
+                m_field[x][y] = index;
                 switch (dir) {
                     case 0:
                         x++;
@@ -205,11 +180,11 @@ char **IGamer::ConsoleGamer::getField() {
     return m_field;
 }
 
-void IGamer::ConsoleGamer::shoot(char** &enemy) {
+void IGamer::ConsoleGamer::shoot(char** &enemy, std::map<char, ship> &enemyShips) {
 
 }
 
-std::map<char, int> IGamer::ConsoleGamer::getShips() {
+std::map<char, IGamer::ship> IGamer::ConsoleGamer::getShips() {
     return ships;
 }
 
@@ -286,8 +261,13 @@ void IGamer::RandomGamer::setShip(int &shipCount, int &shipSize, int &shipIndex)
         if (setting_is_possible) {
             x = temp_x;
             y = temp_y;
+            char index = static_cast<char>(static_cast<int>('0') + shipIndex);
+            ships[index].size = shipSize;
+            ships[index].x_begin = x;
+            ships[index].y_begin = y;
+            ships[index].direction = dir;
             for (int i = 0; i < shipSize; ++i) {
-               m_field[x][y] = static_cast<char>(static_cast<int>('0') + shipIndex);
+               m_field[x][y] = index;
                 switch (dir) {
                     case 0:
                         x++;
@@ -316,30 +296,75 @@ char **IGamer::RandomGamer::getField() {
     return m_field;
 }
 
-void IGamer::RandomGamer::shoot(char** &enemy) {
-//    bool isThereShip = true;
-//    int x, y;
-//    while (isThereShip) {
-//        x = rand() % sizeField;
-//        y = rand() % sizeField;
-//        if (enemy[x][y] == '#') {
-//            for (int x1 = x - 1; x1 <= x + 1; x1++) {
-//                for (int y1 = y - 1; y1 <= y + 1; y1++) {
-//                    if (!inBounds(x1, y1)) {
-//                        continue;
-//                    }
-//                    if (m_field[x1][y1] == '#') {
-//                        setting_is_possible = false;
-//                        break;
-//                    }
-//                }
-//            }
-//
-//        }
-//    }
+void addHit(char** &enemy, char &index, std::map<char, IGamer::ship> &ships){
+    int x_begin = ships[index].x_begin;
+    int y_begin = ships[index].y_begin;
+    while ((!inBounds(x_begin, y_begin)) && (enemy[x_begin][y_begin] == 'X')) {
+        for (int x1 = x_begin - 1; x1 <= x_begin + 1; x1++) {
+            for (int y1 = y_begin - 1; y1 <= y_begin + 1; y1++) {
+                if (!inBounds(x1, y1)) {
+                    continue;
+                }
+                if (enemy[x1][y1] == ' ')  {
+                    enemy[x1][y1] = '.';
+                }
+            }
+        }
+        switch (ships[index].direction) {
+            case 0:
+                x_begin++;
+                break;
+            case 1:
+                y_begin++;
+                break;
+            case 2:
+                x_begin--;
+                break;
+            case 3:
+                y_begin--;
+                break;
+            default:
+                break;
+        }
+    }
 }
 
-std::map<char, int> IGamer::RandomGamer::getShips() {
+void IGamer::RandomGamer::shoot(char** &enemy, std::map<char, ship> &enemyShips) {
+    bool hit = true;
+    int x, y;
+    while (hit) {
+        x = rand() % sizeField;
+        y = rand() % sizeField;
+        std::cout << "Coordinates:" << x << " " << y << std::endl;
+        char index = enemy[x][y];
+        if ((index >= '0') && ((index <= '9'))) {
+                enemyShips[index].size--;
+                std::cout << "HIT!!!" << std::endl;
+                enemy[x][y] = 'X';
+            IGameView::ConsoleView:: consoleView(m_field, enemy);
+//            Sleep(3000);
+            if (enemyShips[index].size == 0) {
+                std:: cout << "YOU HIT THE ENEMY SHEEP!" << std::endl;
+                addHit(enemy, index, enemyShips);
+                std::cout<<"1"<< std::endl;
+                IGameView::ConsoleView:: consoleView(m_field, enemy);
+                std::cout<<"2"<< std::endl;
+//                Sleep(3000);
+            }
+        } else {
+            if ((index == 'X') || (index == '.')) {
+                std::cout << "You have already hit here" << std::endl;
+                continue;
+            }
+            enemy[x][y] = '.';
+            IGameView::ConsoleView:: consoleView(m_field, enemy);
+//            Sleep(3000);
+            hit = false;
+        }
+    }
+}
+
+std::map<char, IGamer::ship> IGamer::RandomGamer::getShips() {
     return ships;
 }
 
@@ -417,8 +442,15 @@ void IGamer::OptimalGamer::setShip(int &shipCount, int &shipSize, int &shipIndex
         if (setting_is_possible) {
             x = temp_x;
             y = temp_y;
+            x = temp_x;
+            y = temp_y;
+            char index = static_cast<char>(static_cast<int>('0') + shipIndex);
+            ships[index].size = shipSize;
+            ships[index].x_begin = x;
+            ships[index].y_begin = y;
+            ships[index].direction = dir;
             for (int i = 0; i < shipSize; ++i) {
-                m_field[x][y] = static_cast<char>(static_cast<int>('0') + shipIndex);
+                m_field[x][y] = index;
                 switch (dir) {
                     case 0:
                         x++;
@@ -447,10 +479,10 @@ char **IGamer::OptimalGamer::getField() {
     return m_field;
 }
 
-void IGamer::OptimalGamer::shoot(char** &enemy) {
+void IGamer::OptimalGamer::shoot(char** &enemy, std::map<char, ship> &enemyShips) {
 
 }
 
-std::map<char, int> IGamer::OptimalGamer::getShips() {
+std::map<char, IGamer::ship> IGamer::OptimalGamer::getShips() {
     return ships;
 }

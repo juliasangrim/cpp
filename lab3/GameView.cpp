@@ -21,10 +21,15 @@ void IGameView::ConsoleView::printPlayingField(char** &field1, char** &field2) {
     for (int i = 0; i < sizeField; i++) {
         std::cout<< i + 1 << "\t";
         for (int j = 0; j < sizeField; j++) {
-            if ((field1[i][j] >= '0') && (field1[i][j] <= '9')) {
+            if ((field1[i][j] >= '0') && (field1[i][j] <= '9') && (field1[i][j] == 'X')) {
             std::cout << "|" << '#' << "|";
             } else {
-                std::cout << "|" << field1[i][j] << "|";
+                if (field1[i][j] == '.') {
+
+                    std::cout << "|" << ' ' << "|";
+                } else {
+                    std::cout << "|" << field1[i][j] << "|";
+                }
             }
         }
         std::cout<<"\t\t"<< i + 1 << "\t";

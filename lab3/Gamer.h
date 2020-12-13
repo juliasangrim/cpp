@@ -9,58 +9,62 @@
 #include <memory>
 #include <windows.h>
 #include <map>
+#include <ctime>
 #include "GameView.h"
 #define sizeField 10
 
 namespace IGamer {
+    typedef struct ship{
+        int size, x_begin, y_begin, direction;
+    } ship;
     class IGamer {
     public:
         ~IGamer() = default;
         virtual void setShip(int &shipCount, int &shipSize, int &shipIndex) = 0;
         virtual char** getField() = 0;
-        virtual std::map<char, int>getShips() = 0;
+        virtual std::map<char, ship>getShips() = 0;
         virtual void shipLoop() = 0;
-        virtual void shoot(char** &player2) = 0;
+        virtual void shoot(char** &player2, std::map<char, ship> &enemyShips) = 0;
     };
 
     class ConsoleGamer : public IGamer {
     private:
         char **m_field;
-        std::map<char, int> ships;
+        std::map<char, ship> ships;
     public:
         ConsoleGamer();
         void shipLoop() override;
         void setShip(int &shipCount, int &shipSize, int &shipIndex)override;
-        void shoot(char** &enemy) override;
+        void shoot(char** &enemy, std::map<char, ship> &enemyShips) override;
         char** getField() override;
-        std::map<char, int>getShips()override;
+        std::map<char, ship>getShips()override;
         //TODO destructor
     };
 
     class RandomGamer : public IGamer {
     private:
         char **m_field;
-        std::map<char, int> ships;
+        std::map<char, ship> ships;
     public:
         RandomGamer();
         void shipLoop() override;
         void setShip(int &shipCount, int &shipSize, int &shipIndex) override;
-        void shoot(char** &enemy) override;
+        void shoot(char** &enemy, std::map<char, ship> &enemyShips) override;
         char** getField() override;
-        std::map<char, int>getShips()override;
+        std::map<char, ship>getShips()override;
     };
 
     class OptimalGamer : public IGamer {
     private:
         char **m_field;
-        std::map<char, int> ships;
+        std::map<char, ship> ships;
     public:
         OptimalGamer();
         void shipLoop() override;
         void setShip(int &shipCount, int &shipSize, int &shipIndex)override;
-        void shoot(char** &enemy) override;
+        void shoot(char** &enemy, std::map<char, ship> &enemyShips) override;
         char** getField() override;
-        std::map<char, int>getShips()override;
+        std::map<char, ship>getShips()override;
     };
 }
 bool inBound(int &x, int &y);
