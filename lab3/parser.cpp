@@ -69,8 +69,7 @@ int Parser::parserCmd(int argc, char **argv) {
     if (options[static_cast<int> (Parser::OptionIndex::COUNT)]) {
         countRounds = std::stoi(options[static_cast<int> (Parser::OptionIndex::COUNT)].arg);
     }
-    /////////////////////////////////////////////////////////////////////////////////////////
-    //TODO FIRST
+    //////////FIRST///////////////////////////////////////////////////////////////////////////////
     std::shared_ptr<IGamer::IGamer> player1;
     if (options[static_cast<int> (Parser::OptionIndex::FIRST)]) {
         std::string first(options[static_cast<int> (Parser::OptionIndex::FIRST)].arg);
@@ -86,8 +85,7 @@ int Parser::parserCmd(int argc, char **argv) {
     } else {
         player1 = std::make_shared<IGamer::RandomGamer>();
     }
-    //////////////////////////////////////////////////////////////////////////////////////////
-    //TODO SECOND
+    //////////SECOND////////////////////////////////////////////////////////////////////////////////
     std::shared_ptr<IGamer::IGamer> player2;
     if (options[static_cast<int> (Parser::OptionIndex::SECOND)]) {
         std::string second(options[static_cast<int> (Parser::OptionIndex::SECOND)].arg);

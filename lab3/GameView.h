@@ -1,5 +1,3 @@
-
-
 #ifndef SEABATTLE_GAMEVIEW_H
 #define SEABATTLE_GAMEVIEW_H
 #include <iostream>
@@ -15,12 +13,9 @@ namespace IGameView {
     };
 
     class ConsoleView : IGameView {
-    private:
+    public:
         static void printPlayingField(char** &field1, char** &field2);
         static void printRounds(int rounds);
-    public:
-//        explicit ConsoleView(char** array1, char** array2); //TODO constructor for matrix
-        static void consoleView(char** &field1, char** &field2);
     };
 }
 #endif //SEABATTLE_GAMEVIEW_H
