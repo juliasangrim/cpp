@@ -1,6 +1,6 @@
 #include "GameView.h"
 
-void IGameView::ConsoleView::printPlayingField(char** &field1, char** &field2) {
+void IGameView::ConsoleView::printPlayingField(char** field1, char** field2) {
     std::cout<<"         1  2  3  4  5  6  7  8  9  10                   1  2  3  4  5  6  7  8  9  10"<<std::endl;
     std::cout << "\n";
 

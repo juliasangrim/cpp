@@ -103,7 +103,7 @@ void IGamer::direction(int &dir, int &x, int &y) {
     }
 }
 
-void IGamer::addHit(char** &enemy, char &index, std::map<char, ship> &ships){
+void IGamer::addHit(char** enemy, char &index, std::map<char, ship> &ships){
     int x_begin = ships[index].x_begin;
     int y_begin = ships[index].y_begin;
     while (inBounds(x_begin, y_begin) && (enemy[x_begin][y_begin] == 'X')) {
@@ -253,7 +253,7 @@ std::map<char, IGamer::ship> IGamer::ConsoleGamer::getShips() {
     return ships;
 }
 
-bool IGamer::ConsoleGamer::shoot(char** &enemy, std::map<char, ship> &enemyShips) {
+bool IGamer::ConsoleGamer::shoot(char** enemy, std::map<char, ship> &enemyShips) {
     bool hit = true;
     int x, y;
     IGameView::ConsoleView::printPlayingField(m_field,enemy);
@@ -389,7 +389,7 @@ char **IGamer::RandomGamer::getField() {
 }
 
 
-bool IGamer::RandomGamer::shoot(char** &enemy, std::map<char, ship> &enemyShips) {
+bool IGamer::RandomGamer::shoot(char** enemy, std::map<char, ship> &enemyShips) {
     bool hit = true;
     int x, y;
     while (hit) {
@@ -534,7 +534,7 @@ void IGamer::OptimalGamer::changeDirection(int &dir, int &x, int &y) {
     dir++;
 }
 
-bool IGamer::OptimalGamer::shoot(char** &enemy, std::map<char, ship> &enemyShips) {
+bool IGamer::OptimalGamer::shoot(char** enemy, std::map<char, ship> &enemyShips) {
     bool hit = true;
     while (hit) {
         if (!isCoordFind) {

@@ -14,7 +14,7 @@ namespace IGameView {
 
     class ConsoleView : IGameView {
     public:
-        static void printPlayingField(char** &field1, char** &field2);
+        static void printPlayingField(char** field1, char** field2);
         static void printRounds(int rounds);
     };
 }

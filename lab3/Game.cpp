@@ -1,6 +1,6 @@
 #include "Game.h"
 
-void playGame(std::shared_ptr<IGamer::IGamer> &player1, std::shared_ptr<IGamer::IGamer> &player2, int & rounds) {
+void playGame(std::shared_ptr<IGamer::IGamer> &player1, std::shared_ptr<IGamer::IGamer> &player2, int &rounds) {
     int score1 = 0;
     int score2 = 0;
     for (int i = 1; i <= rounds; i++){
