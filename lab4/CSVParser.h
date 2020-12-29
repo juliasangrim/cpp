@@ -22,45 +22,64 @@ namespace Parser {
             int _index;
             std::vector<std::string> _parsedLine;
             std::vector<int> _pos;
+            bool _isLast;
             int _currIndex = 0;
         public:
-            CSVIterator(int idx, CSVParser<Arg ...> &parse);
+            CSVIterator(bool flag, CSVParser<Arg ...> &parse);
+
+            CSVIterator(int idx, CSVParser<Arg ...> &parse, bool flag);
+
             void getIndexLine();
+
             CSVIterator operator++();
-            bool operator ==(CSVIterator secondIterator);
-            bool operator !=(CSVIterator secondIterator);
-            std::tuple<Arg...> operator *();
-            void parseLine ();
-            std::tuple<Arg...>vectorIntoTuple();
+
+            bool operator==(CSVIterator secondIterator);
+
+            bool operator!=(CSVIterator secondIterator);
+
+            std::tuple<Arg...> operator*();
+
+            void parseLine();
+
+            std::tuple<Arg...> vectorIntoTuple();
         };
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        explicit CSVParser(std::ifstream &file, int index = 0, char columnDelim = ',',char lineDelim = '\n', char fieldDelim = '"');
+        explicit CSVParser(std::ifstream &file, int index = 0, char columnDelim = ',', char lineDelim = '\n',
+                           char fieldDelim = '"');
+
         std::string getLine();
-        int getSize();
+
         char getColumnDelim();
+
         char getFieldDelim();
+
         void changePosition();
+
         CSVIterator begin();
+
         CSVIterator end();
     };
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////CSVIterator methods////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    template<typename... Arg>
+    CSVParser<Arg...>::CSVIterator::CSVIterator(bool flag, CSVParser<Arg...> &parse) : _isLast(flag), _csvParser(parse), _str(""){
+    }
     template<typename ... Arg>
-    CSVParser<Arg...>::CSVIterator::CSVIterator(int idx, CSVParser<Arg ...> &parse) : _index(idx), _csvParser(parse) {
+    CSVParser<Arg...>::CSVIterator::CSVIterator(int idx, CSVParser<Arg ...> &parse, bool flag) : _index(idx), _csvParser(parse) {
         this->getIndexLine();
     }
 
     template<typename ... Arg>
     void CSVParser<Arg...>::CSVIterator::getIndexLine() {
-        int tmpSize = _csvParser.getSize();
         _csvParser.changePosition();
-        if (_index <= tmpSize) //TODO indexation
         for (auto i = 0; i < _index; ++i) {
             _str = _csvParser.getLine();
         }
-        else {
-            _str = "";
+        if (!_str.empty()) {
+            this->_isLast = true;
         }
     }
 
@@ -73,12 +92,12 @@ namespace Parser {
 
     template<typename ... Arg>
     bool CSVParser<Arg...>::CSVIterator::operator==(CSVIterator secondIterator) {
-        return this->_str == secondIterator._str && this->_index == secondIterator._index;
+        return this->_str == secondIterator._str && this->_isLast == secondIterator._isLast;
     }
 
     template<typename ... Arg>
     bool CSVParser<Arg...>::CSVIterator::operator!=(CSVIterator secondIterator) {
-        return this->_str != secondIterator._str || this->_index != secondIterator._index;
+        return this->_str != secondIterator._str || this->_isLast != secondIterator._isLast;
     }
 
     template<typename... Arg>
@@ -89,43 +108,42 @@ namespace Parser {
 
     template<typename... Arg>
     typename CSVParser<Arg...>::CSVIterator CSVParser<Arg...>::begin() {
-        CSVIterator begin(1, *this);
+        CSVIterator begin(1, *this, false);
         return begin;
     }
 
     template<typename... Arg>
     typename CSVParser<Arg...>::CSVIterator CSVParser<Arg...>::end() {
-        int indexEnd = this->getSize();
-        indexEnd++;
-        CSVIterator end(indexEnd, *this);
+        CSVIterator end(true, *this);
         return end;
     }
 
     template<typename T>
-    void makeTuple(T& t, std::string &str, int &currIndex, int &lineNumber){
+    void makeTuple(T &t, std::string &str, int &currIndex, int &lineNumber) {
         std::istringstream stream(str);
-        if ((stream >> t).fail() || !(stream >> std::ws).eof()){
-           throw ParserException("Error: incorrect field", lineNumber, currIndex);
+        if ((stream >> t).fail() || !(stream >> std::ws).eof()) {
+            throw ParserException("Error: incorrect field", lineNumber, currIndex);
         };
-    currIndex ++;
-}
+        currIndex++;
+    }
 
     void makeTuple(std::string &t, std::string &str, int &currIndex, int &lineNumber) {
         t = str;
-        currIndex ++;
+        currIndex++;
     }
 
     template<typename ...Arg, std::size_t ... I>
-    void forEach(std::tuple<Arg...> &t, std::index_sequence<I...>, std::vector<std::string> parsedLine, int &currIndex, int &lineNumber){
+    void forEach(std::tuple<Arg...> &t, std::index_sequence<I...>, std::vector<std::string> parsedLine, int &currIndex,
+                 int &lineNumber) {
         ((makeTuple(std::get<I>(t), parsedLine[I], currIndex, lineNumber)), ...);
     }
 
     template<typename... Arg>
     std::tuple<Arg...> CSVParser<Arg...>::CSVIterator::vectorIntoTuple() {
         _currIndex = 0;
-        std::tuple<Arg...>tup;
+        std::tuple<Arg...> tup;
         forEach(tup, std::index_sequence_for<Arg...>(), _parsedLine, _currIndex, _index);
-        if (_currIndex != _parsedLine.size()){
+        if (_currIndex != _parsedLine.size()) {
             throw ParserException("Error: tuple size != line elements", _index, _currIndex);
         }
         return tup;
@@ -143,19 +161,12 @@ namespace Parser {
     }
 
     template<typename ... Arg>
-    int CSVParser<Arg ...>::getSize() {
-        int size = 0;
-        this->changePosition();
-        while (!_input.eof()) {
-            getLine();
-            size++;
-        }
-        return size;
-    }
-    template<typename ... Arg>
     std::string CSVParser<Arg ...>::getLine() {
         std::string line;
         char ch;
+        if (_input.eof()) {
+            return "";
+        }
         while (_input.get(ch)) {
             if (ch == _lineDelim) break;
             line += ch;
@@ -182,8 +193,7 @@ namespace Parser {
         return _fieldDelim;
     }
 
-    enum class CSVState
-    {
+    enum class CSVState {
         ReadField,
         ReadDelimField,
         ReadDelimDelimField,
@@ -206,37 +216,32 @@ namespace Parser {
                         _parsedLine.emplace_back("");
                         _pos.push_back(curPos);
                         i++;
-                    }
-                    else if (c == fieldDelim) {
+                    } else if (c == fieldDelim) {
                         state = CSVState::ReadDelimField;
-                    }
-                    else {
+                    } else {
                         _parsedLine[i].push_back(c);
                     }
-                break;
+                    break;
                 case CSVState::ReadDelimField:
                     if (c == fieldDelim) {
                         state = CSVState::ReadDelimDelimField;
-                    }
-                    else {
+                    } else {
                         _parsedLine[i].push_back(c);
                     }
-                break;
+                    break;
                 case CSVState::ReadDelimDelimField:
                     if (c == columnDelim) {
                         _parsedLine.emplace_back("");
                         _pos.push_back(curPos);
                         i++;
                         state = CSVState::ReadField;
-                    }
-                    else if (c == fieldDelim) {
+                    } else if (c == fieldDelim) {
                         _parsedLine[i].push_back(fieldDelim);
                         state = CSVState::ReadDelimField;
-                    }
-                    else {
+                    } else {
                         state = CSVState::ReadField;
                     }
-                break;
+                    break;
             }
             curPos++;
         }
@@ -244,5 +249,6 @@ namespace Parser {
             throw ParserException("Error: wrong field", _index, _pos.size());
         }
     }
+
 }
 #endif //CSV_CSVPARSER_H
