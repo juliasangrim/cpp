@@ -1,2 +1,3 @@
-# cpp
+# University course
+## C++
 Not the best labs during my study....
